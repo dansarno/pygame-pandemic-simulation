@@ -1,0 +1,19 @@
+pandemic:
+  death_rate: 0.5
+  frames_to_death: 1000
+  frames_to_bury: 200
+
+environment:
+  dimensions: [1000, 600]
+
+people:
+  number: 100
+  infected: 3
+  radius: 5  # int
+
+appearance:
+  clear_colour: [175, 195, 203]
+  infected_colour: [192, 99, 18]
+  recovered_colour: [211, 126, 220]
+  dead_colour: [50, 50, 50]
+  bg_colour: [255, 255, 255]
