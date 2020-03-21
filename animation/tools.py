@@ -9,7 +9,7 @@ def random_between(start, stop):
 
 def load_yaml(file):
     # Read YAML file containing configuration information
-    yaml_path = pathlib.Path.cwd() / 'pandemic_simulation' / file
+    yaml_path = pathlib.Path.cwd() / 'pandemic_simulation' / 'animation' / file
     with yaml_path.open(mode='r') as f:
         yaml_doc = f.read()
     return yaml.load(yaml_doc, Loader=yaml.FullLoader)
