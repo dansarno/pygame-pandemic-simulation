@@ -8,7 +8,7 @@ environment:
 
 people:
   number: 100
-  infected: 3
+  infected: 10
   radius: 5  # int
 
 appearance:
