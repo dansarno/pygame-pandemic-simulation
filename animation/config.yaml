@@ -8,12 +8,12 @@ environment:
 
 people:
   number: 100
-  infected: 10
+  infected: 5
   radius: 5  # int
 
 appearance:
   clear_colour: [175, 195, 203]
-  infected_colour: [192, 99, 18]
   recovered_colour: [211, 126, 220]
   dead_colour: [50, 50, 50]
+  infected_colour: [192, 99, 18]
   bg_colour: [255, 255, 255]

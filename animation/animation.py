@@ -4,7 +4,6 @@ import population
 import environment
 import health
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 def render_plot(plot_origin, stats, frame):
@@ -37,11 +36,9 @@ if __name__ == '__main__':
     our_population = population.People(our_world, configs['people']['number'], configs['people']['infected'])
     our_population.populate(configs['people']['radius'])
 
-    running_totals = []
-    frame_number = 1
-
     screen.fill(configs['appearance']['bg_colour'])
 
+    frame_number = 1
     # Run until the user asks to quit
     running = True
     while running:
@@ -90,7 +87,6 @@ if __name__ == '__main__':
         # Update positions and characteristics of each person in the population
         our_population.update()
         counts = our_population.test_population()
-        running_totals.append(counts)
 
         render_plot([20, 475], counts, frame_number)
 
@@ -112,7 +108,3 @@ if __name__ == '__main__':
 
     # Done! Time to quit.
     pygame.quit()
-
-    # plt.figure()
-    # plt.plot(running_totals)
-    # plt.show()

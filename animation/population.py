@@ -22,9 +22,9 @@ class Person:
 
     def check_up(self):
         if self.status == health.infected:
-            if self.age > 60 and (self.days_infected > health.infected.frame_limit):
+            if self.age > 80 and (self.days_infected > health.infected.frame_limit):
                 self.status = health.dead
-            elif self.age <= 60 and (self.days_infected > health.infected.frame_limit):
+            elif self.age <= 80 and (self.days_infected > health.infected.frame_limit):
                 self.status = health.recovered
             else:
                 self.days_infected += 1
@@ -114,4 +114,7 @@ class People:
         self.n_infected = infected_count
         self.n_dead = dead_count
         self.n_recovered = recovered_count
-        return [clear_count, infected_count, dead_count, recovered_count]
+        return [clear_count, recovered_count, dead_count, infected_count]
+
+    def test_endgame(self):
+        pass
