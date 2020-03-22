@@ -8,14 +8,14 @@ import numpy as np
 
 def render_plot(plot_origin, stats, frame):
     delta_y = 0
-    for stat, colours in zip(stats, list(configs['appearance'].items())):
-        if stat == 0:
+    for stat, colours in zip(list(stats.items()), list(configs['appearance'].items())):
+        if stat[1] == 0:
             continue
         pygame.draw.rect(screen,
                          colours[1],
-                         ((plot_origin[0] + frame) // 2, plot_origin[1] + delta_y, 1, stat),
+                         ((plot_origin[0] + frame) // 2, plot_origin[1] + delta_y, 1, stat[1]),
                          0)
-        delta_y += stat
+        delta_y += stat[1]
 
 
 if __name__ == '__main__':

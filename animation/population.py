@@ -61,10 +61,12 @@ class People:
         self.n_people = n_people
         self.box = box
         self.persons = []
-        self.n_clear = n_people - n_infected
         self.n_infected = n_infected
-        self.n_recovered = 0
-        self.n_dead = 0
+        self.stats = {'clear': self.n_people - self.n_infected,
+                      'recovered': 0,
+                      'dead': 0,
+                      'infected': self.n_infected
+                      }
 
     def __len__(self):
         return len(self.persons)
@@ -110,11 +112,12 @@ class People:
                 dead_count += 1
             if person.status == health.recovered:
                 recovered_count += 1
-        self.n_clear = clear_count
-        self.n_infected = infected_count
-        self.n_dead = dead_count
-        self.n_recovered = recovered_count
-        return [clear_count, recovered_count, dead_count, infected_count]
+        self.stats = {'clear': clear_count,
+                      'recovered': recovered_count,
+                      'dead': dead_count,
+                      'infected': infected_count
+                      }
+        return self.stats
 
     def test_endgame(self):
         pass
