@@ -6,16 +6,17 @@ import health
 import numpy as np
 
 
-def render_plot(plot_origin, stats, frame):
-    delta_y = 0
-    for stat, colours in zip(list(stats.items()), list(configs['appearance'].items())):
-        if stat[1] == 0:
-            continue
-        pygame.draw.rect(screen,
-                         colours[1],
-                         ((plot_origin[0] + frame) // 2, plot_origin[1] + delta_y, 1, stat[1]),
-                         0)
-        delta_y += stat[1]
+def render_plot(plot_origin, people, frame):
+    if not people.its_over:
+        delta_y = 0
+        for stat, colours in zip(list(people.stats.items()), list(configs['appearance'].items())):
+            if stat[1] == 0:
+                continue
+            pygame.draw.rect(screen,
+                             colours[1],
+                             ((plot_origin[0] + frame) // 2, plot_origin[1] + delta_y, 1, stat[1]),
+                             0)
+            delta_y += stat[1]
 
 
 if __name__ == '__main__':
@@ -86,9 +87,9 @@ if __name__ == '__main__':
 
         # Update positions and characteristics of each person in the population
         our_population.update()
-        counts = our_population.test_population()
+        our_population.test_population()
 
-        render_plot([20, 475], counts, frame_number)
+        render_plot([20, 475], our_population, frame_number)
 
         # text = font.render(f"Clear: {counts[0]}", True, (0, 0, 0))
         # screen.blit(text, (50, 500 - text.get_height() // 2))

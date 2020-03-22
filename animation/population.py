@@ -67,6 +67,7 @@ class People:
                       'dead': 0,
                       'infected': self.n_infected
                       }
+        self.its_over = False
 
     def __len__(self):
         return len(self.persons)
@@ -112,12 +113,15 @@ class People:
                 dead_count += 1
             if person.status == health.recovered:
                 recovered_count += 1
+
+        if self.stats['infected'] == 0 and self.stats['recovered'] == recovered_count:
+            self.its_over = True
+
         self.stats = {'clear': clear_count,
                       'recovered': recovered_count,
                       'dead': dead_count,
                       'infected': infected_count
                       }
-        return self.stats
 
     def test_endgame(self):
         pass
