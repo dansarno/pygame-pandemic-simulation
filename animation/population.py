@@ -62,12 +62,12 @@ class People:
         self.box = box
         self.persons = []
         self.n_infected = n_infected
+        self.infection_free = False
         self.stats = {'healthy': self.n_people - self.n_infected,
                       'recovered': 0,
                       'dead': 0,
                       'infected': self.n_infected
                       }
-        self.infection_free = False
 
     def __len__(self):
         return len(self.persons)
@@ -94,10 +94,6 @@ class People:
                 # Only perform collision check for people that are not themselves
                 if person is not other_person:
                     person.collide(other_person)
-
-            # if person.status == health.dead and person.days_dead > health.dead.frame_limit:
-            #     self.persons.remove(person)
-            #     del person
 
     def test_population(self):
         healthy_count = 0

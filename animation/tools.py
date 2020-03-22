@@ -17,11 +17,9 @@ def load_yaml(file):
 
 def round_to_total(number_set, total=100, digit_after_decimal=0):
     """
-        This function take a list of number and return a list of percentage, which represents the portion of each number
-        in sum of all numbers
-        Moreover, those percentages are adding up to 100%!!!
-        Notice: the algorithm we are using here is 'Largest Remainder'
-        The down-side is that the results won't be accurate, but they are never accurate anyway:)
+        Largest Remainder Method
+        This function takes a list of numbers and returns a new list of numbers which represent the portion of each that
+        sum exactly to the desired 'total' value
     """
     unround_numbers = [x / float(sum(number_set)) * total * 10 ** digit_after_decimal for x in number_set]
     decimal_part_with_index = sorted([(index, unround_numbers[index] % 1) for index in range(len(unround_numbers))],

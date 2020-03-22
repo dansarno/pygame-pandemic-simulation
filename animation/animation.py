@@ -68,15 +68,6 @@ def render_text(people, origin):
         else:
             i += 1
 
-    # text = font.render(f"Infected: {counts[1]}", True, (0, 0, 0))
-    # screen.blit(text, (50, 560 - text.get_height() // 2))
-    #
-    # text = font.render(f"Dead: {counts[2]}", True, (0, 0, 0))
-    # screen.blit(text, (320, 500 - text.get_height() // 2))
-    #
-    # text = font.render(f"Recovered: {counts[3]}", True, (0, 0, 0))
-    # screen.blit(text, (320, 560 - text.get_height() // 2))
-
 
 if __name__ == '__main__':
 
