@@ -8,14 +8,17 @@ import numpy as np
 
 def render_plot(people, origin, frame):
     delta_y = 0
-    for stat, colours in zip(list(people.stats.items()), list(configs['appearance']['people'].items())):
-        if stat[1] == 0:
+    counts = list(people.stats.values())
+    rounded_counts = tools.round_to_total(counts, total=100)
+    for count, colours in zip(rounded_counts, list(configs['appearance']['people'].items())):
+        if count == 0:
             continue
         pygame.draw.rect(screen,
                          colours[1],
-                         ((origin[0] + frame) // 2, origin[1] + delta_y, 1, stat[1]),
+                         ((origin[0] + frame) // 2, origin[1] + delta_y,
+                          1, count),
                          0)
-        delta_y += stat[1]
+        delta_y += count
 
 
 def render_population(people, origin):
