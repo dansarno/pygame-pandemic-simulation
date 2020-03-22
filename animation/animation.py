@@ -8,7 +8,7 @@ import numpy as np
 
 def render_plot(people, origin, frame):
     delta_y = 0
-    for stat, colours in zip(list(people.stats.items()), list(configs['appearance'].items())):
+    for stat, colours in zip(list(people.stats.items()), list(configs['appearance']['people'].items())):
         if stat[1] == 0:
             continue
         pygame.draw.rect(screen,
@@ -20,27 +20,27 @@ def render_plot(people, origin, frame):
 
 def render_population(people, origin):
     for i, person in enumerate(people.persons):
-        if person.status == health.clear:
+        if person.status == health.healthy:
             pygame.draw.circle(screen,
-                               configs['appearance']['clear_colour'],
+                               configs['appearance']['people']['healthy_colour'],
                                tuple(person.pos.astype(int)),
                                configs['people']['radius'])
 
         if person.status == health.infected:
             pygame.draw.circle(screen,
-                               configs['appearance']['infected_colour'],
+                               configs['appearance']['people']['infected_colour'],
                                tuple(person.pos.astype(int)),
                                configs['people']['radius'])
 
         if person.status == health.recovered:
             pygame.draw.circle(screen,
-                               configs['appearance']['recovered_colour'],
+                               configs['appearance']['people']['recovered_colour'],
                                tuple(person.pos.astype(int)),
                                configs['people']['radius'])
 
         if person.days_dead < health.dead.frame_limit and person.status == health.dead:
             pygame.draw.circle(screen,
-                               configs['appearance']['dead_colour'],
+                               configs['appearance']['people']['dead_colour'],
                                tuple(person.pos.astype(int)),
                                configs['people']['radius'])
 
@@ -48,14 +48,16 @@ def render_population(people, origin):
 def render_text(people, origin):
     # Cover text area
     pygame.draw.rect(screen,
-                     configs['appearance']['bg_colour'],
+                     configs['appearance']['background']['bg_colour'],
                      (650, 460, configs['environment']['dimensions'][0] - 460,
                       configs['environment']['dimensions'][1] - 400),
                      0)
     i = 0
     j = 0
-    for status, count in people.stats.items():
-        text = font.render(f"{status}: {count}".capitalize(), True, (0, 0, 0))
+    for stat, colours in zip(list(people.stats.items()), list(configs['appearance']['people'].items())):
+        text = font.render(f"{stat[0]}: {stat[1]}".capitalize(),
+                           True,
+                           colours[1])
         screen.blit(text, (origin[0] + (i * 140), (origin[1] + (j * 50))))
         if i == 1:
             i = 0
@@ -91,7 +93,7 @@ if __name__ == '__main__':
     our_population = population.People(our_world, configs['people']['number'], configs['people']['infected'])
     our_population.populate(configs['people']['radius'])
 
-    screen.fill(configs['appearance']['bg_colour'])
+    screen.fill(configs['appearance']['background']['bg_colour'])
 
     frame_number = 1
     # Run until the user asks to quit
@@ -105,13 +107,13 @@ if __name__ == '__main__':
 
         # Fill the background with the background colour
         pygame.draw.rect(screen,
-                         configs['appearance']['bg_colour'],
+                         configs['appearance']['background']['bg_colour'],
                          (0, 0, configs['environment']['dimensions'][0], configs['environment']['dimensions'][1] - 125),
                          0)
 
         # Draw line between simulation and the plot
         pygame.draw.rect(screen,
-                         (200, 200, 200),
+                         (220, 220, 220),
                          (0, configs['environment']['dimensions'][1] - 150, configs['environment']['dimensions'][0], 1),
                          0)
 
@@ -120,9 +122,9 @@ if __name__ == '__main__':
         our_population.test_population()
 
         render_population(our_population, [0, 0])
-        if not our_population.is_it_over:
+        if not our_population.infection_free:
             render_plot(our_population, [20, 475], frame_number)
-        render_text(our_population, [680, 480])
+            render_text(our_population, [680, 480])
 
         # Flip the display
         pygame.display.flip()

@@ -6,7 +6,7 @@ import math
 
 class Person:
     # add class variables here
-    def __init__(self, box, age, size, status=health.clear, days_infected=0, days_dead=0):
+    def __init__(self, box, age, size, status=health.healthy, days_infected=0, days_dead=0):
         self.box = box
         self.pos = np.random.rand(2) * self.box.dimensions
         self.age = age
@@ -50,7 +50,7 @@ class Person:
         distance = math.hypot(delta[0], delta[1])
         if distance < self.size + other.size \
                 and (self.status == health.infected or other.status == health.infected) \
-                and (self.status == health.clear or other.status == health.clear):
+                and (self.status == health.healthy or other.status == health.healthy):
             self.transmission()
             other.transmission()
 
@@ -62,12 +62,12 @@ class People:
         self.box = box
         self.persons = []
         self.n_infected = n_infected
-        self.stats = {'clear': self.n_people - self.n_infected,
+        self.stats = {'healthy': self.n_people - self.n_infected,
                       'recovered': 0,
                       'dead': 0,
                       'infected': self.n_infected
                       }
-        self.is_it_over = False
+        self.infection_free = False
 
     def __len__(self):
         return len(self.persons)
@@ -100,13 +100,13 @@ class People:
             #     del person
 
     def test_population(self):
-        clear_count = 0
+        healthy_count = 0
         infected_count = 0
         dead_count = 0
         recovered_count = 0
         for person in self.persons:
-            if person.status == health.clear:
-                clear_count += 1
+            if person.status == health.healthy:
+                healthy_count += 1
             if person.status == health.infected:
                 infected_count += 1
             if person.status == health.dead:
@@ -115,9 +115,9 @@ class People:
                 recovered_count += 1
 
         if self.stats['infected'] == 0 and self.stats['recovered'] == recovered_count:
-            self.is_it_over = True
+            self.infection_free = True
 
-        self.stats = {'clear': clear_count,
+        self.stats = {'healthy': healthy_count,
                       'recovered': recovered_count,
                       'dead': dead_count,
                       'infected': infected_count
