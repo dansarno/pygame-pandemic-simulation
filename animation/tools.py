@@ -35,5 +35,5 @@ def round_to_total(number_set, total=100, digit_after_decimal=0):
 
 if __name__ == '__main__':
     counts = [43, 56, 75, 86, 97]
-    rounded_counts = round_to_100_percent(counts)
+    rounded_counts = round_to_total(counts)
     print(rounded_counts)

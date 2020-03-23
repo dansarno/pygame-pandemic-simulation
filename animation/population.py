@@ -2,6 +2,7 @@ import numpy as np
 import health
 import tools
 import math
+from scipy.spatial.distance import pdist, cdist, squareform
 
 
 class Person:
@@ -14,7 +15,6 @@ class Person:
         self.status = status
         self.days_infected = days_infected
         self.days_dead = days_dead
-
         self.vector = np.array([tools.random_between(-1, 1), tools.random_between(-1, 1)]) * self.status.speed
 
     def transmission(self):
@@ -68,32 +68,60 @@ class People:
                       'dead': 0,
                       'infected': self.n_infected
                       }
+        self.positions_matrix = np.zeros([self.n_people, 2])
+        self.vector_matrix = np.zeros([self.n_people, 2])
+
+        self.healthy_positions = np.zeros([self.n_people - self.n_infected, 2])
+        self.infected_positions = np.zeros([self.n_infected, 2])
 
     def __len__(self):
         return len(self.persons)
 
     def populate(self, size):
-        for _ in range(self.n_people - self.n_infected):
-            self.persons.append(Person(self.box,
-                                       tools.random_between(0, 100),
-                                       size=size
-                                       ))
-        for _ in range(self.n_infected):
-            self.persons.append(Person(self.box,
-                                       tools.random_between(0, 100),
-                                       size=size,
-                                       status=health.infected
-                                       ))
+        for i in range(self.n_people - self.n_infected):
+            healthy_person = Person(self.box,
+                                    tools.random_between(0, 100),
+                                    size=size
+                                    )
+            self.persons.append(healthy_person)
+            self.positions_matrix[i] = healthy_person.pos
+            self.vector_matrix[i] = healthy_person.vector
+        for i in range(self.n_infected):
+            infected_person = Person(self.box,
+                                     tools.random_between(0, 100),
+                                     size=size,
+                                     status=health.infected
+                                     )
+            self.persons.append(infected_person)
+            self.positions_matrix[i + (self.n_people - self.n_infected)] = infected_person.pos
+            self.vector_matrix[i + (self.n_people - self.n_infected)] = infected_person.vector
 
     def update(self):
-        for person in self.persons:
+        collisions = self.check_collisions()
+        for i, person in enumerate(self.persons):
             person.check_up()
             person.move()
+            self.positions_matrix[i] = person.pos
             person.boundary()
-            for other_person in self.persons:
-                # Only perform collision check for people that are not themselves
-                if person is not other_person:
-                    person.collide(other_person)
+            self.vector_matrix[i] = person.vector
+            for j, other_person in enumerate(self.persons):
+                if collisions[i][j] \
+                        and (person.status == health.infected or other_person.status == health.infected) \
+                        and (person.status == health.healthy or other_person.status == health.healthy):
+                    person.transmission()
+                    other_person.transmission()
+            # for other_person in self.persons:
+            #     # Only perform collision check for people that are not themselves
+            #     if person is not other_person:
+            #         person.collide(other_person)
+
+    def check_collisions(self):
+        dist_condensed = pdist(self.positions_matrix)
+        return squareform(dist_condensed) < 5
+
+    def check_collisions_2(self):
+        dist_condensed = cdist(self.healthy_positions, self.infected_positions)
+        return squareform(dist_condensed) < 8
 
     def test_population(self):
         healthy_count = 0
