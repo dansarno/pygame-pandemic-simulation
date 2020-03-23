@@ -45,14 +45,31 @@ class Person:
         if self.pos[1] >= (self.box.dimensions - self.size)[1]:
             self.vector[1] = np.abs(self.vector[1]) * -1
 
-    def collide(self, other):
-        delta = self.pos - other.pos
-        distance = math.hypot(delta[0], delta[1])
-        if distance < self.size + other.size \
-                and (self.status == health.infected or other.status == health.infected) \
-                and (self.status == health.healthy or other.status == health.healthy):
-            self.transmission()
-            other.transmission()
+    def collide(self, population, mode='basic'):
+        if mode == 'basic':
+            for other in population:
+                # Only perform collision check for people that are not themselves
+                if self is not other:
+                    delta = self.pos - other.pos
+                    distance = math.hypot(delta[0], delta[1])
+                    if distance < self.size + other.size \
+                            and (self.status == health.infected or other.status == health.infected) \
+                            and (self.status == health.healthy or other.status == health.healthy):
+                        self.transmission()
+                        other.transmission()
+
+        if mode == 'selective':
+            if self.status == health.healthy:
+                for other in population:
+                    # Only perform collision check for people that are not themselves
+                    if self is not other \
+                            and (self.status == health.infected or other.status == health.infected)\
+                            and (self.status == health.healthy or other.status == health.healthy):
+                        delta = self.pos - other.pos
+                        distance = math.hypot(delta[0], delta[1])
+                        if distance < self.size + other.size:
+                            self.transmission()
+                            other.transmission()
 
 
 class People:
@@ -85,15 +102,12 @@ class People:
                                        status=health.infected
                                        ))
 
-    def update(self):
+    def update(self, mode_from_configs):
         for person in self.persons:
             person.check_up()
             person.move()
             person.boundary()
-            for other_person in self.persons:
-                # Only perform collision check for people that are not themselves
-                if person is not other_person:
-                    person.collide(other_person)
+            person.collide(self.persons, mode=mode_from_configs)
 
     def test_population(self):
         healthy_count = 0

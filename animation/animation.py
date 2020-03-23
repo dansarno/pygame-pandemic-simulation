@@ -112,7 +112,7 @@ if __name__ == '__main__':
                          0)
 
         # Update positions and characteristics of each person in the population
-        our_population.update()
+        our_population.update(configs['pandemic']['collision_detection'])
         our_population.test_population()
 
         render_population(our_population, [0, 0])
