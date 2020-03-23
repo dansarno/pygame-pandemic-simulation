@@ -58,6 +58,7 @@ class Person:
                         self.transmission()
                         other.transmission()
 
+
         if mode == 'selective':
             if self.status == health.healthy:
                 for other in population:
