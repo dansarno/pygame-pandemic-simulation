@@ -5,16 +5,37 @@ import math
 
 
 class Person:
-    # add class variables here
+    """
+    This is a class for each person in the population.
+
+    Attributes
+    ----------
+    box : object of type Area
+        The environment which bounds the person.
+    age : float
+        Person's age.
+    size : int
+        Radius, in number of pixels, of the person displayed in the simulation.
+    status : attribute of the Status objects
+        Health status of the person.
+    days_infected : int
+        Number of frames since the person was infected.
+    days_dead : int
+        Number of frames since the person died.
+    pos : 2 element numpy array of floats
+        x and y values defining the centre of the person's position in 2-D.
+    vector : 2 element numpy array of floats
+        Vx and Vy values defining the vector of motion for the person, scaled by the health status dependant speed
+
+    """
     def __init__(self, box, age, size, status=health.healthy, days_infected=0, days_dead=0):
         self.box = box
-        self.pos = np.random.rand(2) * self.box.dimensions
         self.age = age
         self.size = size
         self.status = status
         self.days_infected = days_infected
         self.days_dead = days_dead
-
+        self.pos = np.random.rand(2) * self.box.dimensions
         self.vector = np.array([tools.random_between(-1, 1), tools.random_between(-1, 1)]) * self.status.speed
 
     def transmission(self):
@@ -92,6 +113,24 @@ class Person:
             self.vector[1] = np.abs(self.vector[1]) * -1
 
     def collide(self, population, mode='basic'):
+        """
+        Changes the health status of a person to infected if they come into contact with someone who is infected.
+
+        Parameters
+        ----------
+        population : People object
+            The population with which to check for collisions.
+        mode : string
+            Specify the method for determining the proximity of people.
+            'basic' = every person is checked against all other people to see if they are close enough for transmission
+            'selective' = only healthy people are checked against infected people to see if they are close enough for
+                          transmission.
+
+        Returns
+        -------
+        None
+
+        """
         if mode == 'basic':
             for other in population:
                 # Only perform collision check for people that are not themselves
@@ -138,7 +177,7 @@ class People:
         Container for the counts of the health status of very person in the population.
 
     """
-    # add class variables here
+
     def __init__(self, box, n_people, n_infected):
         self.n_people = n_people
         self.n_infected = n_infected
@@ -168,7 +207,7 @@ class People:
         stats_string = f""
         i = 1
         for status_type, count in self.stats.items():
-            stats_string += f"{' ' if i != 1 else ''}{count}{',' if i != len(self.stats) else ''}"
+            stats_string += f"{' ' if i != 1 else ''}{status_type.capitalize()[0]}: {count}{',' if i != len(self.stats) else ''}"
             i += 1
         return f"{self.__class__.__name__} ({stats_string})"
 
