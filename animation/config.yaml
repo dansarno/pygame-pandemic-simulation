@@ -2,15 +2,27 @@ pandemic:
   death_rate: 0.5
   frames_to_death: 1000
   frames_to_bury: 200
-  collision_detection: 'selective'
+  collision_detection: 'basic'
 
 environment:
   dimensions: [1000, 600]
 
 people:
-  number: 500
-  infected: 5
+  number: 100
+  initially_infected: 5
   radius: 5  # int
+  healthy:
+    speed: [1, 2]
+    frame_limit: [0, 0]
+  infected:
+    speed: [0.5, 1.5]
+    frame_limit: [250, 350]
+  recovered:
+    speed: [1, 2]
+    frame_limit: [0, 0]
+  dead:
+    speed: [0, 0]
+    frame_limit: [200, 250]
 
 appearance:
   people:

@@ -3,9 +3,9 @@ import yaml
 import pathlib
 
 
-def random_between(lower, upper):
-    """Random number (float) between given upper and lower bounds"""
-    return ((upper - lower) * random()) + lower
+def random_between(lower_upper_list):
+    """Random number (float) between given lower and upper bounds stored in list as [lower, upper]"""
+    return ((lower_upper_list[1] - lower_upper_list[0]) * random()) + lower_upper_list[0]
 
 
 def load_yaml(file):
@@ -63,6 +63,4 @@ def round_to_total(number_set, total=100, digit_after_decimal=0):
 
 # To be run for testing only
 if __name__ == '__main__':
-    counts = [43, 56, 75, 86, 97]
-    rounded_counts = round_to_total(counts)
-    print(rounded_counts)
+    print(random_between(0, 0))

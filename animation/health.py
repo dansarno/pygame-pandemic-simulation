@@ -11,7 +11,15 @@ class Status:
         self.frame_limit = frame_limit
 
 
-healthy = Status('healthy', tools.random_between(1, 2), np.nan)
-infected = Status('infected', tools.random_between(0.5, 1.5), tools.random_between(250, 350))
-recovered = Status('recovered', tools.random_between(1, 2), np.nan)
-dead = Status('dead', 0.0, tools.random_between(200, 250))
+healthy = Status('healthy',
+                 tools.random_between(configs['people']['healthy']['speed']),
+                 tools.random_between(configs['people']['healthy']['frame_limit']))
+infected = Status('infected',
+                  tools.random_between(configs['people']['infected']['speed']),
+                  tools.random_between(configs['people']['infected']['frame_limit']))
+recovered = Status('recovered',
+                   tools.random_between(configs['people']['recovered']['speed']),
+                   tools.random_between(configs['people']['recovered']['frame_limit']))
+dead = Status('dead',
+              tools.random_between(configs['people']['dead']['speed']),
+              tools.random_between(configs['people']['dead']['frame_limit']))

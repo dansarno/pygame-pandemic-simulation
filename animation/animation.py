@@ -84,7 +84,7 @@ if __name__ == '__main__':
     # Create environment object
     our_world = environment.Area(np.array(configs['environment']['dimensions']) - np.array([0, 150]))
     # Create a population for our environment
-    our_population = population.People(our_world, configs['people']['number'], configs['people']['infected'])
+    our_population = population.People(our_world, configs['people']['number'], configs['people']['initially_infected'])
     our_population.populate(configs['people']['radius'])
 
     screen.fill(configs['appearance']['background']['bg_colour'])

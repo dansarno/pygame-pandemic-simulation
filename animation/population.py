@@ -36,7 +36,7 @@ class Person:
         self.days_infected = days_infected
         self.days_dead = days_dead
         self.pos = np.random.rand(2) * self.box.dimensions
-        self.vector = np.array([tools.random_between(-1, 1), tools.random_between(-1, 1)]) * self.status.speed
+        self.vector = np.array([tools.random_between([-1, 1]), tools.random_between([-1, 1])]) * self.status.speed
 
     def transmission(self):
         """Transmits the virus to the person. Changes the status attribute of the person object to health.infected."""
@@ -226,12 +226,12 @@ class People:
         """
         for _ in range(self.n_people - self.n_infected):
             self.persons.append(Person(self.box,
-                                       tools.random_between(0, 100),
+                                       tools.random_between([0, 100]),
                                        size=size
                                        ))
         for _ in range(self.n_infected):
             self.persons.append(Person(self.box,
-                                       tools.random_between(0, 100),
+                                       tools.random_between([0, 100]),
                                        size=size,
                                        status=health.infected
                                        ))
