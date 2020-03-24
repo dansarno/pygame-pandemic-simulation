@@ -8,8 +8,8 @@ environment:
   dimensions: [1000, 600]
 
 people:
-  number: 200
-  infected: 10
+  number: 500
+  infected: 5
   radius: 5  # int
 
 appearance:
