@@ -39,16 +39,7 @@ class Person:
         self.vector = np.array([tools.random_between(-1, 1), tools.random_between(-1, 1)]) * self.status.speed
 
     def transmission(self):
-        """
-        Transmits the virus to the person.
-
-        Changes the status attribute of the person object to health.infected.
-
-        Returns
-        -------
-        None
-
-        """
+        """Transmits the virus to the person. Changes the status attribute of the person object to health.infected."""
         self.status = health.infected
 
     def check_up(self):

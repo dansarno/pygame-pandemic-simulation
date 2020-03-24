@@ -3,12 +3,25 @@ import yaml
 import pathlib
 
 
-def random_between(start, stop):
-    return ((stop - start) * random()) + start
+def random_between(lower, upper):
+    """Random number (float) between given upper and lower bounds"""
+    return ((upper - lower) * random()) + lower
 
 
 def load_yaml(file):
-    # Read YAML file containing configuration information
+    """
+    Loads the yaml file and returns a dictionary of the file contents.
+
+    Parameters
+    ----------
+    file : string
+        Name of the yaml file with extension i.e. 'filename.yaml'.
+
+    Returns
+    -------
+    dict
+        Structured contents of the yaml file.
+    """
     yaml_path = pathlib.Path.cwd() / 'pandemic_simulation' / 'animation' / file
     with yaml_path.open(mode='r') as f:
         yaml_doc = f.read()
@@ -17,9 +30,24 @@ def load_yaml(file):
 
 def round_to_total(number_set, total=100, digit_after_decimal=0):
     """
-        Largest Remainder Method
-        This function takes a list of numbers and returns a new list of numbers which represent the portion of each that
-        sum exactly to the desired 'total' value
+    Largest Remainder Method
+
+    Function takes a list of numbers and returns a new list of numbers with the same proportions where the list sums
+    exactly to the desired 'total' value and each element has the stipulated number of digits after the decimal point.
+
+    Parameters
+    ----------
+    number_set : list of floats or ints
+        List of numbers on which the function acts.
+    total : float or int
+        The total which the returned list must sum to.
+    digit_after_decimal : int
+        The number of digits after the decimal point each element fo the returned list must have.
+
+    Returns
+    -------
+    list
+
     """
     unround_numbers = [x / float(sum(number_set)) * total * 10 ** digit_after_decimal for x in number_set]
     decimal_part_with_index = sorted([(index, unround_numbers[index] % 1) for index in range(len(unround_numbers))],
@@ -33,6 +61,7 @@ def round_to_total(number_set, total=100, digit_after_decimal=0):
     return [int(int(x) / float(10 ** digit_after_decimal)) for x in unround_numbers]
 
 
+# To be run for testing only
 if __name__ == '__main__':
     counts = [43, 56, 75, 86, 97]
     rounded_counts = round_to_total(counts)
