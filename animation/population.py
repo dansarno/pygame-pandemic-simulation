@@ -42,7 +42,15 @@ class Person:
         """Transmits the virus to the person. Changes the status attribute of the person object to health.infected."""
         self.status = health.infected
 
-    def check_up(self):
+    def recovery(self):
+        """The person recovers from infection. Changes the status attribute of the person object to health.recovered."""
+        self.status = health.recovered
+
+    def death(self):
+        """The person dies from infection. Changes the status attribute of the person object to health.dead."""
+        self.status = health.dead
+
+    def check_up(self, age_lim):
         """
         Checks the health of the person and performs an action.
 
@@ -51,16 +59,21 @@ class Person:
             b. if they are under a certain age and been infected for a certain number of days they recover
             c. else the number of days infected attribute increases by one.
 
+        Parameters
+        ----------
+        age_lim : float
+            Age above which an infected person dies.
+
         Returns
         -------
         None
 
         """
         if self.status == health.infected:
-            if self.age > 80 and (self.days_infected > health.infected.frame_limit):
-                self.status = health.dead
-            elif self.age <= 80 and (self.days_infected > health.infected.frame_limit):
-                self.status = health.recovered
+            if self.age > age_lim and (self.days_infected > health.infected.frame_limit):
+                self.death()
+            elif self.age <= age_lim and (self.days_infected > health.infected.frame_limit):
+                self.recovery()
             else:
                 self.days_infected += 1
         if self.status == health.dead:
@@ -206,7 +219,7 @@ class People:
         """Special method returning the person in the population given an index int"""
         return self.persons[index]
 
-    def populate(self, size):
+    def populate(self, size, ages):
         """
         Creates many people and stores the objects in the 'persons' list attribute of this class.
 
@@ -218,7 +231,8 @@ class People:
         ----------
         size : int
             Radius, in number of pixels, of the people in the population to be generated.
-
+        ages : float
+            Ages of the people to be added to the population.
         Returns
         -------
         None
@@ -226,24 +240,26 @@ class People:
         """
         for _ in range(self.n_people - self.n_infected):
             self.persons.append(Person(self.box,
-                                       tools.random_between([0, 100]),
+                                       tools.random_between(ages),
                                        size=size
                                        ))
         for _ in range(self.n_infected):
             self.persons.append(Person(self.box,
-                                       tools.random_between([0, 100]),
+                                       tools.random_between(ages),
                                        size=size,
                                        status=health.infected
                                        ))
         self.test_population()
 
-    def update(self, mode_string):
+    def update(self, age_lim, mode_string):
         """
         All actions to be performed on each person stored in the 'persons' attribute of this class for each frame of
         animation.
 
         Parameters
         ----------
+        age_lim : float
+            Age above which an infected person dies.
         mode_string : string
             Specify the method for determining the proximity of people.
             'basic' = every person is checked against all other people to see if they are close enough for transmission
@@ -256,7 +272,7 @@ class People:
 
         """
         for person in self.persons:
-            person.check_up()
+            person.check_up(age_lim)
             person.move()
             person.boundary()
             person.collide(self.persons, mode=mode_string)

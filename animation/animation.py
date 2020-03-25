@@ -7,6 +7,23 @@ import numpy as np
 
 
 def render_plot(people, origin, frame):
+    """
+    Renders live scrolling plot on screen.
+
+    Parameters
+    ----------
+    people : People object
+        The population whose statistics are to be plotted.
+    origin : list
+        Pixel coordinates, i.e. [x, y], of the top left corner of the plot area.
+    frame : int
+        The moment in time - as a frame number - at which the plot should be displayed.
+
+    Returns
+    -------
+    None
+
+    """
     delta_y = 0
     counts = list(people.stats.values())
     rounded_counts = tools.round_to_total(counts, total=100)
@@ -22,6 +39,21 @@ def render_plot(people, origin, frame):
 
 
 def render_population(people, origin):
+    """
+    Renders live simulation to screen. Note: origin parameter is currently unused.
+
+    Parameters
+    ----------
+    people : People object
+        The population whose simulation is to be displayed.
+    origin : list
+        Pixel coordinates, i.e. [x, y], of the top left corner of the simulation area.
+
+    Returns
+    -------
+    None
+
+    """
     for i, person in enumerate(people.persons):
         if person.status == health.healthy:
             pygame.draw.circle(screen,
@@ -49,6 +81,21 @@ def render_population(people, origin):
 
 
 def render_text(people, origin):
+    """
+    Renders live text updates of the population statistics to screen.
+
+    Parameters
+    ----------
+    people : People object
+        The population whose statistics are to be displayed.
+    origin : list
+        Pixel coordinates, i.e. [x, y], of the top left corner of the text area.
+
+    Returns
+    -------
+    None
+
+    """
     # Cover text area
     pygame.draw.rect(screen,
                      configs['appearance']['background']['bg_colour'],
@@ -79,13 +126,16 @@ if __name__ == '__main__':
     # set the pygame window name
     pygame.display.set_caption('Pandemic Simulation')
 
-    font = pygame.font.SysFont("arialrounded", 22)
+    font = pygame.font.SysFont(configs['appearance']['text']['font'], configs['appearance']['text']['size'])
 
     # Create environment object
     our_world = environment.Area(np.array(configs['environment']['dimensions']) - np.array([0, 150]))
     # Create a population for our environment
-    our_population = population.People(our_world, configs['people']['number'], configs['people']['initially_infected'])
-    our_population.populate(configs['people']['radius'])
+    our_population = population.People(our_world,
+                                       configs['people']['number'],
+                                       configs['people']['initially_infected'])
+    our_population.populate(configs['people']['radius'],
+                            configs['people']['age_range'])
 
     screen.fill(configs['appearance']['background']['bg_colour'])
 
@@ -112,7 +162,7 @@ if __name__ == '__main__':
                          0)
 
         # Update positions and characteristics of each person in the population
-        our_population.update(configs['pandemic']['collision_detection'])
+        our_population.update(configs['pandemic']['at_risk_age'], configs['pandemic']['collision_detection'])
         our_population.test_population()
 
         render_population(our_population, [0, 0])

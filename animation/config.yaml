@@ -1,8 +1,6 @@
 pandemic:
-  death_rate: 0.5
-  frames_to_death: 1000
-  frames_to_bury: 200
   collision_detection: 'basic'
+  at_risk_age: 80
 
 environment:
   dimensions: [1000, 600]
@@ -11,6 +9,7 @@ people:
   number: 100
   initially_infected: 5
   radius: 5  # int
+  age_range: [0, 100]
   healthy:
     speed: [1, 2]
     frame_limit: [0, 0]
@@ -32,3 +31,6 @@ appearance:
     infected_colour: [192, 99, 18]
   background:
     bg_colour: [255, 255, 255]
+  text:
+    font: 'arialrounded'
+    size: 22

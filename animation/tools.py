@@ -63,4 +63,4 @@ def round_to_total(number_set, total=100, digit_after_decimal=0):
 
 # To be run for testing only
 if __name__ == '__main__':
-    print(random_between(0, 0))
+    print(random_between([0, 0]))
