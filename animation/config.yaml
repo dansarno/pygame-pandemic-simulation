@@ -1,29 +1,36 @@
 pandemic:
-  collision_detection: 'basic'
+  collision_detection: 'selective'
   at_risk_age: 80
 
 environment:
-  dimensions: [1000, 600]
+  dimensions: [1000, 400]
 
 people:
-  number: 100
-  initially_infected: 5
-  radius: 5  # int
+  number: 200
+  initially_infected: 1
+  radius: 5 # int
   age_range: [0, 100]
   healthy:
-    speed: [1, 2]
+    speed: [0.8, 1.4]
     frame_limit: [0, 0]
   infected:
     speed: [0.5, 1.5]
     frame_limit: [250, 350]
   recovered:
-    speed: [1, 2]
+    speed: [0.8, 1.4]
     frame_limit: [0, 0]
   dead:
     speed: [0, 0]
     frame_limit: [200, 250]
 
 appearance:
+  show:
+    plot: no
+    text: no
+  origins:
+    simulation: [0, 0]
+    plot: [20, 420]
+    text: [680, 420]
   people:
     healthy_colour: [153, 153, 255]
     recovered_colour: [211, 126, 220]

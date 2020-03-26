@@ -1,7 +1,7 @@
 import numpy as np
+import math
 import health
 import tools
-import math
 
 
 class Person:
@@ -182,7 +182,7 @@ class People:
 
     """
 
-    def __init__(self, box, n_people, n_infected):
+    def __init__(self, box, n_people, n_infected, size, ages):
         self.n_people = n_people
         self.n_infected = n_infected
         self.box = box
@@ -193,6 +193,9 @@ class People:
                       'dead': 0,
                       'infected': self.n_infected
                       }
+
+        # Populate with people...
+        self.populate(size, ages)
 
     def __len__(self):
         """Special method returning the length of the 'persons' attribute i.e. population size"""
