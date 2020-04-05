@@ -1,5 +1,4 @@
 # Pandemic Simulation
-*by Daniel Sarno*
 
 ### About
 Simulation inspired the popular *Why outbreaks like 

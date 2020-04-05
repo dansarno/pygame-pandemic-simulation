@@ -1,12 +1,12 @@
 pandemic:
-  collision_detection: 'selective'  # basic or selective
+  collision_detection: 'basic'  # basic or selective
   at_risk_age: 80
 
 environment:
   dimensions: [1000, 400]
 
 people:
-  number: 500
+  number: 100
   initially_infected: 8
   radius: 5 # int
   age_range: [0, 100]
@@ -22,6 +22,14 @@ people:
   dead:
     speed: [0, 0]
     frame_limit: [100, 250]
+
+events:
+  - type: 'social distancing'
+    trigger_frame: 100
+  - type: 'lockdown'
+    trigger_frame: 400
+  - type: 'normal'
+    trigger_frame: 600
 
 appearance:
   show:

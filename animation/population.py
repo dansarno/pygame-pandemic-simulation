@@ -22,6 +22,10 @@ class Person:
         Number of frames since the person was infected.
     days_dead : int
         Number of frames since the person died.
+    num_infected_by_me : int
+        Count of the number of people this individual is responsible for infecting.
+    _var_speed : float
+        Speed multiplier, altered by events.
     pos : 2 element numpy array of floats
         x and y values defining the centre of the person's position in 2-D.
     vector : 2 element numpy array of floats
@@ -37,8 +41,13 @@ class Person:
         self.days_infected = days_infected
         self.days_dead = days_dead
         self.num_infected_by_me = 0
+        self._var_speed = 1.0
         self.pos = np.random.rand(2) * self.box.dimensions
         self.vector = np.array([tools.random_between([-1, 1]), tools.random_between([-1, 1])]) * self.status.speed
+
+    def behaviour_change(self, new_speed):
+        """A change in the way the individual acts. For example, a change of speed due to government advice."""
+        self._var_speed = new_speed
 
     def infection(self):
         """Transmits the virus to the person. Changes the status attribute of the person object to health.infected."""
@@ -52,7 +61,7 @@ class Person:
         """The person dies from infection. Changes the status attribute of the person object to health.dead."""
         self.status = health.dead
 
-    def check_up(self, age_lim):
+    def checkup(self, age_lim):
         """
         Checks the health of the person and performs an action.
 
@@ -81,6 +90,34 @@ class Person:
         if self.status == health.dead:
             self.days_dead += 1
 
+    def government_advice(self, frame, events):
+        """
+        Handles an individual's response to government advice. Loops through event types from the config file and
+        alters an individual's behaviour (e.g. speed) file the frame trigger has been passed.
+
+        Parameters
+        ----------
+        frame : int
+            Animation frame number.
+        events : list
+            List of events in the config file. Individual events are dictionaries.
+
+        Returns
+        -------
+        None
+
+        """
+        for event in events:
+            if event['type'] == 'social distancing':
+                if frame == event['trigger_frame']:
+                    self.behaviour_change(0.5)
+            if event['type'] == 'lockdown':
+                if frame == event['trigger_frame']:
+                    self.behaviour_change(0.1)
+            if event['type'] == 'normal':
+                if frame == event['trigger_frame']:
+                    self.behaviour_change(1.0)
+
     def move(self):
         """
         Moves the person to the new position.
@@ -93,7 +130,7 @@ class Person:
         None
 
         """
-        self.pos += self.vector * self.status.speed
+        self.pos += self.vector * self.status.speed * self._var_speed
 
     def boundary(self):
         """
@@ -261,13 +298,15 @@ class People:
                                        ))
         self.test_population()
 
-    def update(self, age_lim, mode_string):
+    def update(self, frame, age_lim, mode_string, events):
         """
         All actions to be performed on each person stored in the 'persons' attribute of this class for each frame of
         animation.
 
         Parameters
         ----------
+        frame : int
+            Frame number of animation.
         age_lim : float
             Age above which an infected person dies.
         mode_string : string
@@ -275,6 +314,8 @@ class People:
             'basic' = every person is checked against all other people to see if they are close enough for transmission
             'selective' = only healthy people are checked against infected people to see if they are close enough for
                           transmission.
+        events : list
+            List of government advice events on which each person acts individually/
 
         Returns
         -------
@@ -282,7 +323,8 @@ class People:
 
         """
         for person in self.persons:
-            person.check_up(age_lim)
+            person.checkup(age_lim)
+            person.government_advice(frame, events)
             person.move()
             person.boundary()
             person.collide(self.persons, mode=mode_string)

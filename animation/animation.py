@@ -176,7 +176,10 @@ if __name__ == '__main__':
                              0)
 
         # Update positions and characteristics of each person in the population
-        our_population.update(configs['pandemic']['at_risk_age'], configs['pandemic']['collision_detection'])
+        our_population.update(frame_number,
+                              configs['pandemic']['at_risk_age'],
+                              configs['pandemic']['collision_detection'],
+                              configs['events'])
         our_population.test_population()
 
         render_population(our_population, configs)
