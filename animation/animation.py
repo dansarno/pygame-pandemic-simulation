@@ -25,7 +25,7 @@ def render_plot(people, frame, configurations):
 
     """
     delta_y = 0
-    counts = list(people.stats.values())
+    counts = list(people.status_numbers.values())
     rounded_counts = tools.round_to_total(counts, total=100)
     for count, colours in zip(rounded_counts, list(configurations['appearance']['people'].items())):
         if count == 0:
@@ -106,7 +106,7 @@ def render_text(people, configurations):
                      0)
     i = 0
     j = 0
-    for stat, colours in zip(list(people.stats.items()), list(configurations['appearance']['people'].items())):
+    for stat, colours in zip(list(people.status_numbers.items()), list(configurations['appearance']['people'].items())):
         text = font.render(f"{stat[0]}: {stat[1]}".capitalize(),
                            True,
                            colours[1])

@@ -28,6 +28,7 @@ class Person:
         Vx and Vy values defining the vector of motion for the person, scaled by the health status dependant speed
 
     """
+
     def __init__(self, box, age, size, status=health.healthy, days_infected=0, days_dead=0):
         self.box = box
         self.age = age
@@ -35,10 +36,11 @@ class Person:
         self.status = status
         self.days_infected = days_infected
         self.days_dead = days_dead
+        self.num_infected_by_me = 0
         self.pos = np.random.rand(2) * self.box.dimensions
         self.vector = np.array([tools.random_between([-1, 1]), tools.random_between([-1, 1])]) * self.status.speed
 
-    def transmission(self):
+    def infection(self):
         """Transmits the virus to the person. Changes the status attribute of the person object to health.infected."""
         self.status = health.infected
 
@@ -141,11 +143,13 @@ class Person:
                 if self is not other:
                     delta = self.pos - other.pos
                     distance = math.hypot(delta[0], delta[1])
-                    if distance < self.size + other.size \
-                            and (self.status == health.infected or other.status == health.infected) \
-                            and (self.status == health.healthy or other.status == health.healthy):
-                        self.transmission()
-                        other.transmission()
+                    if distance < self.size + other.size:
+                        if self.status == health.infected and other.status == health.healthy:
+                            other.infection()
+                            self.num_infected_by_me += 1
+                        if self.status == health.healthy and other.status == health.infected:
+                            self.infection()
+                            other.num_infected_by_me += 1
 
         elif mode == 'selective':
             if self.status == health.healthy:
@@ -154,8 +158,8 @@ class Person:
                         delta = self.pos - other.pos
                         distance = math.hypot(delta[0], delta[1])
                         if distance < self.size + other.size:
-                            self.transmission()
-
+                            self.infection()
+                            other.num_infected_by_me += 1
         else:
             pass
             # TODO raise error here is mode is not recognised
@@ -177,8 +181,10 @@ class People:
         Container for very person in the population.
     infection_free : bool
         Indicator of where the population is free from infection or not.
-    stats : dict
+    status_numbers : dict
         Container for the counts of the health status of very person in the population.
+    epi_stats : dict
+        Container for some epidemic statistics.
 
     """
 
@@ -188,11 +194,12 @@ class People:
         self.box = box
         self.persons = []
         self.infection_free = False
-        self.stats = {'healthy': self.n_people - self.n_infected,
-                      'recovered': 0,
-                      'dead': 0,
-                      'infected': self.n_infected
-                      }
+        self.status_numbers = {'healthy': self.n_people - self.n_infected,
+                               'recovered': 0,
+                               'dead': 0,
+                               'infected': self.n_infected,
+                               }
+        self.epi_stats = {'r_zero': 0}
 
         # Populate with people...
         self.populate(size, ages)
@@ -205,7 +212,7 @@ class People:
         """Special method returning a nicely formatted output for print"""
         human_readable_string = "Population \n" \
                                 "-------------"
-        for status_type, count in self.stats.items():
+        for status_type, count in self.status_numbers.items():
             human_readable_string += "\n" + f"{status_type.capitalize()}: {count}"
         return human_readable_string
 
@@ -213,8 +220,8 @@ class People:
         """Special method returning an unambiguous description of the object"""
         stats_string = f""
         i = 1
-        for status_type, count in self.stats.items():
-            stats_string += f"{' ' if i != 1 else ''}{status_type.capitalize()[0]}: {count}{',' if i != len(self.stats) else ''}"
+        for status_type, count in self.status_numbers.items():
+            stats_string += f"{' ' if i != 1 else ''}{status_type.capitalize()[0]}: {count}{',' if i != len(self.status_numbers) else ''}"
             i += 1
         return f"{self.__class__.__name__} ({stats_string})"
 
@@ -282,7 +289,7 @@ class People:
 
     def test_population(self):
         """
-        Update the 'stats' attribute of this class which keeps track of the health status of each person sorted in
+        Update the stats attributes of this class which keep track of the health status of each person sorted in
         the 'persons' attribute. Also detects when the population has had no new infections and updates the
         'infection_free' boolean attribute.
 
@@ -295,6 +302,7 @@ class People:
         infected_count = 0
         dead_count = 0
         recovered_count = 0
+        all_reproduction_nums = np.array([])
         for person in self.persons:
             if person.status == health.healthy:
                 healthy_count += 1
@@ -305,11 +313,18 @@ class People:
             if person.status == health.recovered:
                 recovered_count += 1
 
-        if self.stats['infected'] == 0 and self.stats['recovered'] == recovered_count:
+            if person.status == health.recovered or person.status == health.dead:
+                all_reproduction_nums = np.append(all_reproduction_nums, person.num_infected_by_me)
+
+        if self.status_numbers['infected'] == 0 and self.status_numbers['recovered'] == recovered_count:
             self.infection_free = True
 
-        self.stats = {'healthy': healthy_count,
-                      'recovered': recovered_count,
-                      'dead': dead_count,
-                      'infected': infected_count
-                      }
+        self.status_numbers = {'healthy': healthy_count,
+                               'recovered': recovered_count,
+                               'dead': dead_count,
+                               'infected': infected_count,
+                               }
+
+        # TODO - very likely to be the wrong way to calculate this. Needs work.
+        if all_reproduction_nums.size > 0:
+            self.epi_stats = {'r_zero': np.mean(all_reproduction_nums)}
