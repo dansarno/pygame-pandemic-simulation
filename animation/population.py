@@ -108,15 +108,16 @@ class Person:
 
         """
         for event in events:
-            if event['type'] == 'social distancing':
-                if frame == event['trigger_frame']:
-                    self.behaviour_change(0.5)
-            if event['type'] == 'lockdown':
-                if frame == event['trigger_frame']:
-                    self.behaviour_change(0.1)
-            if event['type'] == 'normal':
-                if frame == event['trigger_frame']:
-                    self.behaviour_change(1.0)
+            if event['enable']:
+                if event['type'] == 'social distancing':
+                    if event['frame_trigger'] and event['frame_trigger']['frame'] == frame:
+                        self.behaviour_change(0.5)
+                if event['type'] == 'lockdown':
+                    if event['frame_trigger'] and event['frame_trigger']['frame'] == frame:
+                        self.behaviour_change(0.1)
+                if event['type'] == 'normal':
+                    if event['frame_trigger'] and event['frame_trigger']['frame'] == frame:
+                        self.behaviour_change(1.0)
 
     def move(self):
         """

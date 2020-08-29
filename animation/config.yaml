@@ -1,5 +1,5 @@
 pandemic:
-  collision_detection: 'basic'  # basic or selective
+  collision_detection: 'selective'  # basic or selective
   at_risk_age: 80
 
 environment:
@@ -24,12 +24,18 @@ people:
     frame_limit: [100, 250]
 
 events:
-  - type: 'social distancing'
-    trigger_frame: 100
-  - type: 'lockdown'
-    trigger_frame: 400
-  - type: 'normal'
-    trigger_frame: 600
+  - enable: yes
+    type: 'social distancing'
+    frame_trigger:
+      frame: 100
+  - enable: yes
+    type: 'lockdown'
+    frame_trigger:
+      frame: 400
+  - enable: yes
+    type: 'normal'
+    frame_trigger:
+      frame: 600
 
 appearance:
   show:

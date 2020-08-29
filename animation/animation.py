@@ -152,10 +152,13 @@ if __name__ == '__main__':
     running = True
     while running:
 
-        # Did the user click the window close button?
+        # Did the user click a button?
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_s:
+                    print("You pressed 'a'")
 
         # Fill the background with the background colour
         pygame.draw.rect(screen,
