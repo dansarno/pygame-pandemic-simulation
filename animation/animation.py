@@ -6,6 +6,7 @@ import health
 import numpy as np
 
 
+# TODO implement frame counter and limit rates to 60fps
 def render_plot(people, frame, configurations):
     """
     Renders live scrolling plot on screen.
