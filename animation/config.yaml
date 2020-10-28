@@ -1,12 +1,12 @@
 pandemic:
-  collision_detection: 'selective'  # basic or selective
+  collision_detection: 'quadtree'  # basic or selective or quadtree
   at_risk_age: 80
 
 environment:
   dimensions: [1000, 400]
 
 people:
-  number: 100
+  number: 1000
   initially_infected: 8
   radius: 5 # int
   age_range: [0, 100]
@@ -24,15 +24,15 @@ people:
     frame_limit: [100, 250]
 
 events:
-  - enable: yes
+  - enable: no
     type: 'social distancing'
     frame_trigger:
       frame: 100
-  - enable: yes
+  - enable: no
     type: 'lockdown'
     frame_trigger:
       frame: 400
-  - enable: yes
+  - enable: no
     type: 'normal'
     frame_trigger:
       frame: 600

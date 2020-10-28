@@ -20,10 +20,10 @@ class Rectangle:
         return self.left < point.x < self.right and self.top < point.y < self.bottom
 
     def intersects(self, other):
-        return not (self.left > other.right or
-                    self.right < other.edge or
-                    self.top > other.bottom or
-                    self.bottom < other.top)
+        return not (other.left > self.right or
+                    other.right < self.left or
+                    other.top > self.bottom or
+                    other.bottom < self.top)
 
 
 class Quadtree:
@@ -38,15 +38,14 @@ class Quadtree:
         self.se = None
 
     def subdivide(self):
-        if not self.nw:
-            x = self.boundary.x
-            y = self.boundary.y
-            half_w = self.boundary.w / 2
-            half_h = self.boundary.h / 2
-            self.nw = Quadtree(Rectangle(x - half_w, y - half_h, half_w, half_h))
-            self.ne = Quadtree(Rectangle(x + half_w, y - half_h, half_w, half_h))
-            self.sw = Quadtree(Rectangle(x - half_w, y + half_h, half_w, half_h))
-            self.se = Quadtree(Rectangle(x - half_w, y + half_h, half_w, half_h))
+        x = self.boundary.x
+        y = self.boundary.y
+        half_w = self.boundary.w / 2
+        half_h = self.boundary.h / 2
+        self.nw = Quadtree(Rectangle(x - half_w, y - half_h, half_w, half_h))
+        self.ne = Quadtree(Rectangle(x + half_w, y - half_h, half_w, half_h))
+        self.sw = Quadtree(Rectangle(x - half_w, y + half_h, half_w, half_h))
+        self.se = Quadtree(Rectangle(x - half_w, y + half_h, half_w, half_h))
 
     def insert(self, point):
         if not self.boundary.contains(point):

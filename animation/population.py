@@ -2,6 +2,7 @@ import numpy as np
 import math
 import health
 import tools
+import quadtree
 
 
 class Person:
@@ -44,6 +45,12 @@ class Person:
         self._var_speed = 1.0
         self.pos = np.random.rand(2) * self.box.dimensions
         self.vector = np.array([tools.random_between([-1, 1]), tools.random_between([-1, 1])]) * self.status.speed
+
+    def __repr__(self):
+        return f"Person: ({self.pos[0]}, {self.pos[1]})"
+
+    def __str__(self):
+        return f"A {self.status.status} person at ({self.pos[0]}, {self.pos[1]})"
 
     def behaviour_change(self, new_speed):
         """A change in the way the individual acts. For example, a change of speed due to government advice."""
@@ -156,7 +163,7 @@ class Person:
         if self.pos[1] + self.size >= self.box.dimensions[1]:
             self.vector[1] = np.abs(self.vector[1]) * -1
 
-    def collide(self, population, mode='basic'):
+    def collide(self, population, mode='basic', qtree=None):
         """
         Changes the health status of a person to infected if they come into contact with someone who is infected.
 
@@ -198,6 +205,23 @@ class Person:
                         if distance < self.size + other.size:
                             self.infection()
                             other.num_infected_by_me += 1
+
+        elif mode == 'quadtree':
+            region = quadtree.Rectangle(self.pos[0], self.pos[1], self.size, self.size)
+            neighbours = qtree.query(region)
+            for neighbour in neighbours:
+                other = neighbour.data
+                if self is not other:
+                    delta = self.pos - other.pos
+                    distance = math.hypot(delta[0], delta[1])
+                    if distance < self.size + other.size:
+                        if self.status == health.infected and other.status == health.healthy:
+                            other.infection()
+                            self.num_infected_by_me += 1
+                        if self.status == health.healthy and other.status == health.infected:
+                            self.infection()
+                            other.num_infected_by_me += 1
+
         else:
             pass
             # TODO raise error here is mode is not recognised
@@ -323,12 +347,19 @@ class People:
         None
 
         """
+        qtree = quadtree.Quadtree(quadtree.Rectangle(self.box.dimensions[0] / 2,
+                                                     self.box.dimensions[1] / 2,
+                                                     self.box.dimensions[0] / 2,
+                                                     self.box.dimensions[1] / 2))
         for person in self.persons:
             person.checkup(age_lim)
             person.government_advice(frame, events)
             person.move()
             person.boundary()
-            person.collide(self.persons, mode=mode_string)
+            qtree.insert(quadtree.Point(person.pos[0], person.pos[1], person))
+
+        for person in self.persons:
+            person.collide(self.persons, mode=mode_string, qtree=qtree)
 
     def test_population(self):
         """
